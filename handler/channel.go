@@ -16,7 +16,8 @@ import (
 )
 
 type Channel struct {
-	Repo *channel.RedisRepo
+	RdRepo *channel.RedisRepo
+	PgRepo *channel.PostgresRepo
 }
 
 func (h *Channel) Create(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +44,7 @@ func (h *Channel) Create(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:  &now,
 	}
 
-	err := h.Repo.Insert(r.Context(), channel)
+	err := h.PgRepo.Insert(r.Context(), channel)
 	if err != nil {
 		fmt.Println("failed to insert channel:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -76,7 +77,7 @@ func (h *Channel) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	const size = 50
-	res, err := h.Repo.FindAll(r.Context(), channel.FindAllPage{
+	res, err := h.PgRepo.FindAll(r.Context(), channel.FindAllPage{
 		Offset: cursor,
 		Size:   size,
 	})
@@ -112,7 +113,7 @@ func (h *Channel) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := h.Repo.FindByID(r.Context(), channelID)
+	u, err := h.PgRepo.FindByID(r.Context(), channelID)
 	if errors.Is(err, channel.ErrNotExist) {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -150,7 +151,7 @@ func (h *Channel) UpdateByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	theChannel, err := h.Repo.FindByID(r.Context(), channelID)
+	theChannel, err := h.PgRepo.FindByID(r.Context(), channelID)
 	if errors.Is(err, channel.ErrNotExist) {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -175,7 +176,7 @@ func (h *Channel) UpdateByID(w http.ResponseWriter, r *http.Request) {
 	}
 	theChannel.UpdatedAt = &now
 
-	err = h.Repo.Update(r.Context(), theChannel)
+	err = h.PgRepo.Update(r.Context(), theChannel)
 	if err != nil {
 		fmt.Println("failed to update channel:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -198,7 +199,7 @@ func (h *Channel) DeleteByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Repo.DeleteByID(r.Context(), channelID)
+	err = h.PgRepo.DeleteByID(r.Context(), channelID)
 	if errors.Is(err, channel.ErrNotExist) {
 		w.WriteHeader(http.StatusNotFound)
 		return

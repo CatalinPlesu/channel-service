@@ -26,14 +26,15 @@ func (a *App) loadRoutes() {
 
 func (a *App) loadChannelRoutes(router chi.Router) {
 	channelHandler := &handler.Channel{
-		Repo: &channel.RedisRepo{
+		RdRepo: &channel.RedisRepo{
 			Client: a.rdb,
 		},
+		PgRepo: channel.NewPostgresRepo(a.db),
 	}
 
-	router.Post("/", channelHandler.Create)                                   
-	router.Get("/", channelHandler.List)                                      
-	router.Get("/{id}", channelHandler.GetByID)                               
-	router.Put("/{id}", channelHandler.UpdateByID)                            
-	router.Delete("/{id}", channelHandler.DeleteByID)                         
+	router.Post("/", channelHandler.Create)
+	router.Get("/", channelHandler.List)
+	router.Get("/{id}", channelHandler.GetByID)
+	router.Put("/{id}", channelHandler.UpdateByID)
+	router.Delete("/{id}", channelHandler.DeleteByID)
 }
