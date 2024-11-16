@@ -62,6 +62,26 @@ func (h *Channel) Create(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+func (h *Channel) ListByName(w http.ResponseWriter, r *http.Request) {
+	nameParam := chi.URLParam(r, "name")
+
+	res, err := h.PgRepo.FindByName(r.Context(), nameParam)
+	if err != nil {
+		fmt.Println("failed to find all channels:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	data, err := json.Marshal(res)
+	if err != nil {
+		fmt.Println("failed to marshal channels:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(data)
+}
+
 func (h *Channel) List(w http.ResponseWriter, r *http.Request) {
 	cursorStr := r.URL.Query().Get("cursor")
 	if cursorStr == "" {

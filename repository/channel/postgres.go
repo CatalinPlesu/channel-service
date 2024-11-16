@@ -46,13 +46,19 @@ func (p *PostgresRepo) FindByID(ctx context.Context, id uuid.UUID) (*model.Chann
 	return &channel, nil
 }
 
-func (p *PostgresRepo) FindByName(ctx context.Context, name string) (*model.Channel, error) {
-	var channel model.Channel
-	err := p.DB.NewSelect().Model(&channel).Where("name = ?", name).Scan(ctx)
+func (p *PostgresRepo) FindByName(ctx context.Context, name string) ([]model.Channel, error) {
+	var channels []model.Channel
+
+	err := p.DB.NewSelect().
+		Model(&channels).
+		Where("name ILIKE ?", "%"+name+"%").
+		Order("channel_id ASC").
+		Limit(10).
+		Scan(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to find channel by ID: %w", err)
+		return nil, fmt.Errorf("failed to find channels by name: %w", err)
 	}
-	return &channel, nil
+	return channels, nil
 }
 
 func (p *PostgresRepo) DeleteByID(ctx context.Context, id uuid.UUID) error {

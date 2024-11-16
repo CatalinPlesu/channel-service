@@ -34,6 +34,7 @@ func (a *App) loadChannelRoutes(router chi.Router) {
 
 	router.Post("/", channelHandler.Create)
 	router.Get("/", channelHandler.List)
+	router.Get("/search/{name}", channelHandler.ListByName)
 	router.Get("/{id}", channelHandler.GetByID)
 	router.Put("/{id}", channelHandler.UpdateByID)
 	router.Delete("/{id}", channelHandler.DeleteByID)
