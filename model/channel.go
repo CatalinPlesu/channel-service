@@ -27,3 +27,8 @@ type UserAcces struct {
 	IsAdmin   bool      `bun:"is_admin" json:"is_admin"`                 
 	CanWrite  bool      `bun:"can_write" json:"can_write"`               
 }
+
+type UserJWTs struct {
+	UserID uuid.UUID `json:"user_id"`
+	JWTs   []string  `json:"jwts"`
+}

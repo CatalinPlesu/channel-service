@@ -6,22 +6,24 @@ import (
 )
 
 type Config struct {
-	RedisAddress     string
-	ServerPort       uint16
-	PostgresAddress  string
-	PostgresUser     string
-	PostgresPassword string
-	PostgresDB       string
+	RedisAddress        string
+	ServerPort          uint16
+	PostgresAddress     string
+	PostgresUser        string
+	PostgresPassword    string
+	PostgresDB          string
+	RabitMQURL          string
 }
 
 func LoadConfig() Config {
 	cfg := Config{
-		ServerPort:       3001,
-		RedisAddress:     "localhost:6379",
-		PostgresAddress:  "localhost:5432",
-		PostgresUser:     "user",
-		PostgresPassword: "password",
-		PostgresDB:       "user_service_db",
+		ServerPort:          3001,
+		RedisAddress:        "localhost:6379",
+		PostgresAddress:     "localhost:5432",
+		PostgresUser:        "user",
+		PostgresPassword:    "password",
+		PostgresDB:          "user_service_db",
+		RabitMQURL:          "amqp://guest:guest@localhost:5672/",
 	}
 
 	if redisAddr, exists := os.LookupEnv("REDIS_ADDR"); exists {
